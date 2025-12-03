@@ -1,0 +1,92 @@
+<div class="space-y-6">
+  <h2 class="text-3xl font-semibold text-center text-indigo-300 mb-6">{{ 'AI_APP_CREATOR_TITLE' | translate }}</h2>
+
+  <div>
+    <label for="appIdea" class="block text-sm font-medium text-gray-300 mb-2">
+      {{ 'DESCRIBE_APP_IDEA_LABEL' | translate }}
+    </label>
+    <textarea
+      id="appIdea"
+      [(ngModel)]="appIdea"
+      class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-gray-400 h-32"
+      [placeholder]="'APP_IDEA_PLACEHOLDER' | translate"></textarea>
+  </div>
+
+  <div>
+    <label for="aiModelPreference" class="block text-sm font-medium text-gray-300 mb-2">
+      {{ 'AI_MODEL_PREFERENCE_LABEL' | translate }}
+    </label>
+    <select
+      id="aiModelPreference"
+      [(ngModel)]="aiModelPreference"
+      class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+      @for (model of aiModels; track model.value) {
+        <option [value]="model.value">{{ model.label }}</option>
+      }
+    </select>
+  </div>
+
+  <button
+    (click)="generateAppBlueprint()"
+    [disabled]="isLoading() || !appIdea()"
+    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+    @if (isLoading()) {
+      {{ 'GENERATING_BLUEPRINT' | translate }}...
+    } @else {
+      {{ 'GENERATE_APP_BLUEPRINT_BUTTON' | translate }}
+    }
+  </button>
+
+  @if (isLoading()) {
+    <div class="mt-6 flex items-center justify-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-400"></div>
+      <span class="ml-3 text-indigo-300">{{ 'SKETCHING_APP_MESSAGE' | translate }}...</span>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="mt-6 p-4 bg-red-800 text-red-100 rounded-md">
+      <p class="font-bold">{{ 'ERROR_LABEL' | translate }}:</p>
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  @if (generatedAppBlueprint()) {
+    <div class="mt-6 p-4 bg-gray-700 rounded-md shadow-inner">
+      <h3 class="text-xl font-semibold text-indigo-200 mb-4">{{ 'GENERATED_APP_BLUEPRINT_TITLE' | translate }}:</h3>
+      <div class="bg-gray-800 p-4 rounded-md text-gray-200">
+        <h4 class="text-2xl font-bold text-indigo-300 mb-2">{{ generatedAppBlueprint()!.appName }}</h4>
+        <p class="text-gray-300 mb-4">{{ generatedAppBlueprint()!.description }}</p>
+
+        <h5 class="text-xl font-semibold text-indigo-200 mb-2">{{ 'FEATURES_TITLE' | translate }}:</h5>
+        <ul class="list-disc list-inside ml-4 mb-4">
+          @for (feature of generatedAppBlueprint()!.features; track feature.name) {
+            <li>
+              <strong>{{ feature.name }}:</strong> {{ feature.description }}
+              @if (feature.aiModelUsed) {
+                <span class="text-sm text-gray-400">(IA: {{ feature.aiModelUsed }})</span>
+              }
+            </li>
+          }
+        </ul>
+
+        <h5 class="text-xl font-semibold text-indigo-200 mb-2">{{ 'SUGGESTED_TECH_STACK_TITLE' | translate }}:</h5>
+        <p class="text-gray-300 mb-4">{{ generatedAppBlueprint()!.techStack.join(', ') }}</p>
+
+        @if (generatedAppBlueprint()!.userStories && generatedAppBlueprint()!.userStories!.length > 0) {
+          <h5 class="text-xl font-semibold text-indigo-200 mb-2">{{ 'USER_STORIES_TITLE' | translate }}:</h5>
+          <ul class="list-disc list-inside ml-4 mb-4">
+            @for (story of generatedAppBlueprint()!.userStories; track story) {
+              <li>{{ story }}</li>
+            }
+          </ul>
+        }
+
+        @if (generatedAppBlueprint()!.pseudoCodeSnippet) {
+          <h5 class="text-xl font-semibold text-indigo-200 mb-2">{{ 'PSEUDO_CODE_SNIPPET_TITLE' | translate }}:</h5>
+          <pre class="bg-gray-900 p-3 rounded-md text-green-300 text-sm overflow-x-auto whitespace-pre-wrap"><code>{{ generatedAppBlueprint()!.pseudoCodeSnippet }}</code></pre>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,96 @@
+@if (isLoggedIn()) {
+<div class="relative min-h-screen md:flex" (click)="isSidenavOpen.set(false)">
+  <!-- Mobile Header -->
+  <div class="bg-gray-900 text-gray-100 flex justify-between md:hidden" (click)="$event.stopPropagation()">
+    <a href="#" class="block p-4 text-white font-bold">{{ 'APP_TITLE' | translate }}</a>
+    <button (click)="toggleSidenav()" class="p-4 focus:outline-none focus:bg-gray-800">
+      <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20">
+        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+      </svg>
+    </button>
+  </div>
+  
+  <!-- Sidebar -->
+  <div class="bg-gray-900 text-blue-100 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform md:relative md:translate-x-0 transition duration-200 ease-in-out z-20" 
+       [class.translate-x-0]="isSidenavOpen()" 
+       [class.-translate-x-full]="!isSidenavOpen()"
+       (click)="$event.stopPropagation()">
+    
+    <h2 class="text-white text-2xl font-semibold text-center">{{ 'APP_TITLE' | translate }}</h2>
+    
+    <nav class="flex flex-col space-y-2">
+      <a (click)="selectView('creator')" [class.bg-indigo-700]="currentView() === 'creator'" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-600 hover:text-white cursor-pointer">{{ 'CREATOR_HUB' | translate }}</a>
+      <a (click)="selectView('history')" [class.bg-indigo-700]="currentView() === 'history'" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-600 hover:text-white cursor-pointer">{{ 'HISTORY' | translate }}</a>
+      <a (click)="selectView('settings')" [class.bg-indigo-700]="currentView() === 'settings'" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-600 hover:text-white cursor-pointer opacity-50">{{ 'SETTINGS' | translate }}</a>
+      <a (click)="selectView('support')" [class.bg-indigo-700]="currentView() === 'support'" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-600 hover:text-white cursor-pointer opacity-50">{{ 'SUPPORT' | translate }}</a>
+    </nav>
+
+    <div class="absolute bottom-4 left-4 right-4">
+        <h3 class="px-4 text-sm font-semibold text-gray-400 mb-2">{{ 'LANGUAGE' | translate }}</h3>
+        <div class="flex justify-around">
+            <button (click)="setLanguage('pt')" [class.bg-indigo-700]="languageService.currentLang() === 'pt'" class="px-4 py-2 text-sm rounded hover:bg-indigo-600 transition-colors">PT</button>
+            <button (click)="setLanguage('en')" [class.bg-indigo-700]="languageService.currentLang() === 'en'" class="px-4 py-2 text-sm rounded hover:bg-indigo-600 transition-colors">EN</button>
+        </div>
+    </div>
+  </div>
+  
+  <!-- Content -->
+  <main class="flex-1 p-4 sm:p-6 lg:p-10 bg-gradient-to-br from-indigo-900 to-purple-800 text-gray-100 overflow-y-auto">
+    @if (currentView() === 'creator') {
+      <div class="bg-gray-800 shadow-xl rounded-lg p-6 w-full max-w-4xl mx-auto">
+        <nav class="mb-8 flex flex-wrap justify-center gap-4">
+          <button
+            (click)="selectFeature('viral-video-creator')"
+            [class.bg-indigo-600]="selectedFeature() === 'viral-video-creator'"
+            class="px-6 py-3 rounded-full font-semibold transition-colors duration-200 bg-gray-700 hover:bg-indigo-700">
+            {{ 'VIRAL_VIDEO_CREATOR' | translate }}
+          </button>
+          <button
+            (click)="selectFeature('video-creation')"
+            [class.bg-indigo-600]="selectedFeature() === 'video-creation'"
+            class="px-6 py-3 rounded-full font-semibold transition-colors duration-200 bg-gray-700 hover:bg-indigo-700">
+            {{ 'CREATE_VIDEOS_WITH_CHARACTERS' | translate }}
+          </button>
+          <button
+            (click)="selectFeature('image-to-video')"
+            [class.bg-indigo-600]="selectedFeature() === 'image-to-video'"
+            class="px-6 py-3 rounded-full font-semibold transition-colors duration-200 bg-gray-700 hover:bg-indigo-700">
+            {{ 'TRANSFORM_IMAGES_TO_VIDEOS' | translate }}
+          </button>
+          <button
+            (click)="selectFeature('website-creator')"
+            [class.bg-indigo-600]="selectedFeature() === 'website-creator'"
+            class="px-6 py-3 rounded-full font-semibold transition-colors duration-200 bg-gray-700 hover:bg-indigo-700">
+            {{ 'SALES_WEBSITE_CREATOR' | translate }}
+          </button>
+          <button
+            (click)="selectFeature('app-creator')"
+            [class.bg-indigo-600]="selectedFeature() === 'app-creator'"
+            class="px-6 py-3 rounded-full font-semibold transition-colors duration-200 bg-gray-700 hover:bg-indigo-700">
+            {{ 'AI_APP_CREATOR' | translate }}
+          </button>
+        </nav>
+      
+        <div class="border-t border-gray-700 pt-8">
+          @switch (selectedFeature()) {
+            @case ('video-creation') { <app-video-creation /> }
+            @case ('image-to-video') { <app-image-to-video /> }
+            @case ('website-creator') { <app-website-creator /> }
+            @case ('app-creator') { <app-app-creator /> }
+            @case ('viral-video-creator') { <app-viral-video-creator /> }
+          }
+        </div>
+      </div>
+    } @else if (currentView() === 'history') {
+      <app-history />
+    } @else {
+        <div class="text-center p-10 bg-gray-800 rounded-lg">
+            <h2 class="text-3xl font-bold">{{ 'COMING_SOON' | translate }}</h2>
+            <p class="text-gray-400 mt-2">{{ 'FEATURE_IN_DEVELOPMENT' | translate }}</p>
+        </div>
+    }
+  </main>
+</div>
+} @else {
+  <app-login />
+}

@@ -1,0 +1,79 @@
+<div class="space-y-6">
+  <h2 class="text-3xl font-semibold text-center text-indigo-300 mb-6">{{ 'VIRAL_VIDEO_CREATOR_TITLE' | translate }}</h2>
+
+  <div>
+    <label for="videoTopic" class="block text-sm font-medium text-gray-300 mb-2">
+      {{ 'VIDEO_TOPIC_LABEL' | translate }}
+    </label>
+    <textarea
+      id="videoTopic"
+      [(ngModel)]="videoTopic"
+      class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-gray-400 h-24"
+      [placeholder]="'VIDEO_TOPIC_PLACEHOLDER' | translate"></textarea>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label for="videoPlatform" class="block text-sm font-medium text-gray-300 mb-2">
+        {{ 'VIDEO_PLATFORM_LABEL' | translate }}
+      </label>
+      <select
+        id="videoPlatform"
+        [(ngModel)]="videoPlatform"
+        class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+        @for (platform of platforms; track platform) {
+          <option [value]="platform">{{ platform }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label for="viralStyle" class="block text-sm font-medium text-gray-300 mb-2">
+        {{ 'VIRAL_STYLE_LABEL' | translate }}
+      </label>
+      <select
+        id="viralStyle"
+        [(ngModel)]="viralStyle"
+        class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+        @for (style of styles; track style.value) {
+          <option [value]="style.value">{{ style.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <button
+    (click)="generateViralVideo()"
+    [disabled]="isLoading() || !videoTopic()"
+    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+    @if (isLoading()) {
+      {{ 'GENERATING' | translate }}...
+    } @else {
+      {{ 'GENERATE_VIRAL_VIDEO_BUTTON' | translate }}
+    }
+  </button>
+
+  @if (isLoading()) {
+    <div class="mt-6 flex items-center justify-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-400"></div>
+      <span class="ml-3 text-indigo-300">{{ 'GENERATING_VIRAL_VIDEO' | translate }}...</span>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="mt-6 p-4 bg-red-800 text-red-100 rounded-md">
+      <p class="font-bold">{{ 'ERROR_LABEL' | translate }}:</p>
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  @if (generatedVideoUrl()) {
+    <div class="mt-6 p-4 bg-gray-700 rounded-md shadow-inner">
+      <h3 class="text-xl font-semibold text-indigo-200 mb-3">{{ 'GENERATED_VIDEO_TITLE' | translate }}:</h3>
+      <video [src]="generatedVideoUrl()" controls class="w-full h-auto rounded-md shadow-lg" autoplay loop muted></video>
+      <a [href]="generatedVideoUrl()" target="_blank" class="mt-3 inline-block text-indigo-400 hover:underline">
+        {{ 'OPEN_VIDEO_IN_NEW_TAB' | translate }}
+      </a>
+    </div>
+  }
+</div>

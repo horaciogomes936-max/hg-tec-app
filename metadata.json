@@ -1,0 +1,7 @@
+{
+  "name": "HG Tec - AI ",
+  "description": "A multi-functional AI system specializing in automatic creation of digital content: animated videos, image-to-video transformations, sales websites, and custom applications.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

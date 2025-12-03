@@ -1,0 +1,79 @@
+<div class="space-y-6">
+  <h2 class="text-3xl font-semibold text-center text-indigo-300 mb-6">{{ 'SALES_WEBSITE_CREATOR_TITLE' | translate }}</h2>
+
+  <div>
+    <label for="nicheInput" class="block text-sm font-medium text-gray-300 mb-2">
+      {{ 'DESCRIBE_NICHE_LABEL' | translate }}
+    </label>
+    <input
+      type="text"
+      id="nicheInput"
+      [(ngModel)]="nicheInput"
+      class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-gray-400"
+      [placeholder]="'NICHE_PLACEHOLDER' | translate" />
+  </div>
+
+  <div>
+    <label for="siteType" class="block text-sm font-medium text-gray-300 mb-2">
+      {{ 'SITE_MODEL_LABEL' | translate }}
+    </label>
+    <select
+      id="siteType"
+      [(ngModel)]="siteType"
+      class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+      @for (type of siteTypes; track type.value) {
+        <option [value]="type.value">{{ type.label }}</option>
+      }
+    </select>
+  </div>
+
+  <button
+    (click)="generateWebsite()"
+    [disabled]="isLoading() || !nicheInput()"
+    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+    @if (isLoading()) {
+      {{ 'GENERATING_SITE' | translate }}...
+    } @else {
+      {{ 'GENERATE_SALES_SITE_BUTTON' | translate }}
+    }
+  </button>
+
+  @if (isLoading()) {
+    <div class="mt-6 flex items-center justify-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-400"></div>
+      <span class="ml-3 text-indigo-300">{{ 'CREATING_SITE_STRUCTURE_MESSAGE' | translate }}...</span>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="mt-6 p-4 bg-red-800 text-red-100 rounded-md">
+      <p class="font-bold">{{ 'ERROR_LABEL' | translate }}:</p>
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  @if (generatedBlueprint()) {
+    <div class="mt-6 p-4 bg-gray-700 rounded-md shadow-inner">
+      <h3 class="text-xl font-semibold text-indigo-200 mb-4">{{ 'SITE_BLUEPRINT_TITLE' | translate }}:</h3>
+      <div class="bg-gray-800 p-4 rounded-md text-gray-200">
+        <h4 class="text-2xl font-bold text-indigo-300 mb-2">{{ generatedBlueprint()!.title }}</h4>
+        <p class="text-gray-400 mb-4">{{ 'NICHE_LABEL' | translate }}: {{ generatedBlueprint()!.niche }} | {{ 'TYPE_LABEL' | translate }}: {{ generatedBlueprint()!.type }}</p>
+
+        @for (section of generatedBlueprint()!.sections; track section.heading) {
+          <div class="mb-6 p-4 bg-gray-700 rounded-md shadow-md">
+            <h5 class="text-xl font-semibold text-indigo-200 mb-2">{{ section.heading }}</h5>
+            @if (generatedImages()[section.heading]) {
+              <img [src]="generatedImages()[section.heading]" alt="Imagem para {{ section.heading }}" class="w-full h-auto rounded-md mb-3" />
+            }
+            <p class="text-gray-300 mb-2">{{ section.content }}</p>
+            @if (section.callToAction) {
+              <a href="#" class="inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-200 mt-2">
+                {{ section.callToAction }}
+              </a>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,46 @@
+<div class="w-full max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-8 text-indigo-300">{{ 'HISTORY_TITLE' | translate }}</h2>
+
+    @if (history().length === 0) {
+        <div class="text-center p-10 bg-gray-800 rounded-lg">
+            <p class="text-gray-400">{{ 'NO_HISTORY_MESSAGE' | translate }}</p>
+        </div>
+    } @else {
+        <div class="space-y-4">
+            @for (item of history(); track item.id) {
+                <details class="bg-gray-800 shadow-lg rounded-lg overflow-hidden group">
+                    <summary class="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-center space-x-4">
+                            <!-- Icon based on type -->
+                            @switch (item.type) {
+                                @case ('video-creation') { <span class="text-indigo-400">&#9654;</span> }
+                                @case ('image-to-video') { <span class="text-purple-400">&#9654;</span> }
+                                @case ('website-creator') { <span class="text-green-400">&#9654;</span> }
+                                @case ('app-creator') { <span class="text-teal-400">&#9654;</span> }
+                                @case ('viral-video') { <span class="text-yellow-400">&#9654;</span> }
+                            }
+                            <span class="font-semibold">{{ item.title }}</span>
+                        </div>
+                        <div class="text-sm text-gray-400">{{ item.timestamp | date:'short' }}</div>
+                    </summary>
+                    <div class="p-4 border-t border-gray-700 bg-gray-800/50">
+                        <h4 class="font-semibold text-indigo-200 mb-2">Input:</h4>
+                        <pre class="bg-gray-900 p-2 rounded text-xs whitespace-pre-wrap"><code>{{ item.input | json }}</code></pre>
+                        
+                        <h4 class="font-semibold text-indigo-200 mt-4 mb-2">Output:</h4>
+                        
+                        @if (item.output['videoUrl']) {
+                            <video [src]="item.output['videoUrl']" controls class="w-full h-auto rounded-md shadow-lg my-2 max-w-sm mx-auto" loop muted></video>
+                        }
+                        
+                        @if (item.output['imageBase64']) {
+                             <img [src]="'data:image/png;base64,' + item.output['imageBase64']" class="w-full h-auto rounded-md shadow-lg my-2 max-w-sm mx-auto" alt="Generated Image Preview" />
+                        }
+
+                        <pre class="bg-gray-900 p-2 rounded text-xs whitespace-pre-wrap"><code>{{ item.output | json }}</code></pre>
+                    </div>
+                </details>
+            }
+        </div>
+    }
+</div>

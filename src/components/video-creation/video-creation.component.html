@@ -1,0 +1,89 @@
+<div class="space-y-6">
+  <h2 class="text-3xl font-semibold text-center text-indigo-300 mb-6">{{ 'CREATE_VIDEOS_WITH_CHARACTERS_TITLE' | translate }}</h2>
+
+  <div>
+    <label for="scriptInput" class="block text-sm font-medium text-gray-300 mb-2">
+      {{ 'ADD_VIDEO_SCRIPT_LABEL' | translate }}
+    </label>
+    <textarea
+      id="scriptInput"
+      [(ngModel)]="scriptInput"
+      class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-gray-400 h-32"
+      [placeholder]="'VIDEO_SCRIPT_PLACEHOLDER' | translate"></textarea>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label for="videoStyle" class="block text-sm font-medium text-gray-300 mb-2">
+        {{ 'VIDEO_STYLE_LABEL' | translate }}
+      </label>
+      <select
+        id="videoStyle"
+        [(ngModel)]="videoStyle"
+        class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+        @for (style of videoStyles; track style) {
+          <option [value]="style">{{ style }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label for="videoDuration" class="block text-sm font-medium text-gray-300 mb-2">
+        {{ 'VIDEO_DURATION_LABEL' | translate }}
+      </label>
+      <select
+        id="videoDuration"
+        [(ngModel)]="videoDuration"
+        class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+        @for (duration of durations; track duration) {
+          <option [value]="duration">{{ duration }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <button
+    (click)="generateVideoContent()"
+    [disabled]="isLoading()"
+    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+    @if (isLoading()) {
+      {{ 'GENERATING' | translate }}...
+    } @else {
+      {{ 'GENERATE_VIDEO_AND_SCRIPT_BUTTON' | translate }}
+    }
+  </button>
+
+  @if (isLoading()) {
+    <div class="mt-6 flex items-center justify-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-400"></div>
+      <span class="ml-3 text-indigo-300">{{ 'GENERATING_CREATION_MESSAGE' | translate }}...</span>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="mt-6 p-4 bg-red-800 text-red-100 rounded-md">
+      <p class="font-bold">{{ 'ERROR_LABEL' | translate }}:</p>
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  @if (generatedScriptPreview()) {
+    <div class="mt-6 p-4 bg-gray-700 rounded-md shadow-inner">
+      <h3 class="text-xl font-semibold text-indigo-200 mb-3">{{ 'SCRIPT_PREVIEW_TITLE' | translate }}:</h3>
+      <div class="bg-gray-800 p-3 rounded-md text-gray-200 whitespace-pre-wrap">
+        {{ generatedScriptPreview() }}
+      </div>
+    </div>
+  }
+
+  @if (generatedVideoUrl()) {
+    <div class="mt-6 p-4 bg-gray-700 rounded-md shadow-inner">
+      <h3 class="text-xl font-semibold text-indigo-200 mb-3">{{ 'GENERATED_VIDEO_TITLE' | translate }}:</h3>
+      <p class="text-gray-300 mb-2">{{ generatedVideoDescription() }}</p>
+      <video [src]="generatedVideoUrl()" controls class="w-full h-auto rounded-md shadow-lg" autoplay loop muted></video>
+      <a [href]="generatedVideoUrl()" target="_blank" class="mt-3 inline-block text-indigo-400 hover:underline">
+        {{ 'OPEN_VIDEO_IN_NEW_TAB' | translate }}
+      </a>
+    </div>
+  }
+</div>
